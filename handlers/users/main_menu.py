@@ -8,11 +8,11 @@ from utils.db_api.database import Poll
 
 @dp.message_handler(text="📰 Мои опросы")
 async def command_my_polls(message: types.Message):
-    await message.answer("Переходим в мои опросы", reply_markup=polls.pollsMenu)\
+    await message.answer("Переходим в мои опросы", reply_markup=polls.pollsMenu)
 
 @dp.message_handler(text="⬅️ В главное меню")
 async def command_go_main(message: types.Message):
-    await message.answer("Переходим в главное меню", reply_markup=polls.pollsMenu)
+    await message.answer("Переходим в главное меню", reply_markup=main.mainMenu)
 
 @dp.message_handler(text="🆕 Создать опрос")
 async def command_create_poll(message: types.Message):
@@ -27,23 +27,10 @@ async def command_menus(message: types.Message):
 
 @dp.message_handler(text="ℹ️ Статистика опросов")
 async def command_menus(message: types.Message):
-    data = await Poll.filter(user_id=message.from_user.id)
+    data = await Poll.filter(Poll.user_id==message.from_user.id)
     await message.answer(data, reply_markup=main.mainMenu)
 
 
-
-
-"""
-@dp.message_handler()
-async def command_menus(message: types.Message):
-
-    elif message.text == 'ℹ️ Статистика опросов':
-        #data = await psycopg.get_polls(message.from_user.id)
-        await message.answer(message.text, reply_markup=main.mainMenu)
-
-    else:
-        await message.answer(message.text, reply_markup=main.mainMenu)
-"""
 
 @dp.message_handler(state = states.create_poll.CreatePoll.name)
 async def process_translation(message: types.Message, state: FSMContext):
