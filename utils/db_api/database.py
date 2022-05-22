@@ -93,7 +93,7 @@ class Type(BaseModel):
     id = Column(Integer, Sequence('question_id_seq'), primary_key=True)
     text = Column(String(256))
 
-    _idx = Index('question_id_index', 'id')
+    _idx = Index('type_id_index', 'id')
 
 class Answer(BaseModel):
     __tablename__ = 'answers'
@@ -110,7 +110,6 @@ class UserAnswer(BaseModel):
 
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    question_id = Column(Integer, ForeignKey('questions.id'))
     answer_id = Column(Integer, ForeignKey('answers.id'))
 
     _idx = Index('user_answer_id_index', 'id')
