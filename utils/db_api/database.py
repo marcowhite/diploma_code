@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
 
-from sqlalchemy import Column, Integer, String, Index, Sequence, ForeignKey, Boolean, and_
+from sqlalchemy import Column, Integer, String, Index, Sequence, ForeignKey, Boolean, and_, func, DateTime
 from sqlalchemy import sql
 from sqlalchemy.exc import InvalidRequestError
 
 from gino import Gino
 
 from data.config import DATABASE_URL
+
+
+
+
 
 database = Gino()
 
@@ -116,7 +121,15 @@ class UserAnswer(BaseModel):
 
     _idx = Index('user_answer_id_index', 'id')
 
+class UserPolls(BaseModel):
+    __tablename__ = 'user_polls'
 
+    id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    poll_id = Column(Integer, ForeignKey('polls.id'))
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+    _idx = Index('user_poll_id_index', 'id')
 async def create_database():
     await database.set_bind(DATABASE_URL)
     try:
