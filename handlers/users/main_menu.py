@@ -4,22 +4,38 @@ from keyboards.default import main, polls
 from loader import dp
 import states
 
+from utils.db_api.database import Poll
 
+@dp.message_handler(text="📰 Мои опросы")
+async def command_my_polls(message: types.Message):
+    await message.answer("Переходим в мои опросы", reply_markup=polls.pollsMenu)\
+
+@dp.message_handler(text="⬅️ В главное меню")
+async def command_go_main(message: types.Message):
+    await message.answer("Переходим в главное меню", reply_markup=polls.pollsMenu)
+
+@dp.message_handler(text="🆕 Создать опрос")
+async def command_create_poll(message: types.Message):
+
+    await states.create_poll.CreatePoll.name.set()
+    await message.reply("Введите название опроса")
+
+@dp.message_handler(text="☑️ Пройти опрос")
+async def command_menus(message: types.Message):
+    await states.take_poll.TakePoll.id.set()
+    await message.reply("Введите ID опроса")
+
+@dp.message_handler(text="ℹ️ Статистика опросов")
+async def command_menus(message: types.Message):
+    data = await Poll.filter(user_id=message.from_user.id)
+    await message.answer(data, reply_markup=main.mainMenu)
+
+
+
+
+"""
 @dp.message_handler()
 async def command_menus(message: types.Message):
-    if message.text == '📰 Мои опросы':
-        await message.answer(message.text, reply_markup=main.mainMenu)
-
-    elif message.text == '⬅️ В главное меню':
-        await message.answer(message.text, reply_markup=main.mainMenu)
-
-    elif message.text == '🆕 Создать опрос':
-        await states.create_poll.CreatePoll.name.set()
-        await message.reply("Введите название опроса")
-
-    elif message.text == '☑️ Пройти опрос':
-        await states.take_poll.TakePoll.id.set()
-        await message.reply("Введите ID опроса")
 
     elif message.text == 'ℹ️ Статистика опросов':
         #data = await psycopg.get_polls(message.from_user.id)
@@ -27,9 +43,9 @@ async def command_menus(message: types.Message):
 
     else:
         await message.answer(message.text, reply_markup=main.mainMenu)
+"""
 
-
-@dp.message_handler(state=states.create_poll.CreatePoll.name)
+@dp.message_handler(state = states.create_poll.CreatePoll.name)
 async def process_translation(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['name'] = message.text
@@ -38,7 +54,7 @@ async def process_translation(message: types.Message, state: FSMContext):
     await message.reply("Введите описание")
 
 
-@dp.message_handler(state=states.create_poll.CreatePoll.description)
+@dp.message_handler(state = states.create_poll.CreatePoll.description)
 async def process_translation(message: types.Message, state: FSMContext):
     await states.create_poll.CreatePoll.next()
 
@@ -51,7 +67,7 @@ async def process_translation(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(state=states.take_poll.TakePoll.id)
+@dp.message_handler(state = states.take_poll.TakePoll.id)
 async def process_translation(message: types.Message, state: FSMContext):
     await states.take_poll.TakePoll.next()
 

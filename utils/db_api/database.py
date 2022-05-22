@@ -70,6 +70,7 @@ class Poll(BaseModel):
     __tablename__ = 'polls'
 
     id = Column(Integer, Sequence('poll_id_seq'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
     name = Column(String(64))
     description = Column(String(256))
 
@@ -110,6 +111,7 @@ class UserAnswer(BaseModel):
 
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
     answer_id = Column(Integer, ForeignKey('answers.id'))
 
     _idx = Index('user_answer_id_index', 'id')
