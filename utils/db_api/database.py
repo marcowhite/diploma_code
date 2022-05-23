@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
@@ -12,10 +11,6 @@ from sqlalchemy.exc import InvalidRequestError
 from gino import Gino
 
 from data.config import DATABASE_URL
-
-
-
-
 
 database = Gino()
 
@@ -71,6 +66,7 @@ class User(BaseModel):
                 pass
         return count_users
 
+
 class Poll(BaseModel):
     __tablename__ = 'polls'
 
@@ -90,8 +86,8 @@ class Question(BaseModel):
     type_id = Column(Integer, ForeignKey('types.id'))
     text = Column(String(256))
 
-
     _idx = Index('question_id_index', 'id')
+
 
 class Type(BaseModel):
     __tablename__ = 'types'
@@ -100,6 +96,7 @@ class Type(BaseModel):
     text = Column(String(256))
 
     _idx = Index('type_id_index', 'id')
+
 
 class Answer(BaseModel):
     __tablename__ = 'answers'
@@ -121,7 +118,8 @@ class UserAnswer(BaseModel):
 
     _idx = Index('user_answer_id_index', 'id')
 
-class UserPolls(BaseModel):
+
+class UserPoll(BaseModel):
     __tablename__ = 'user_polls'
 
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
@@ -130,6 +128,8 @@ class UserPolls(BaseModel):
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     _idx = Index('user_poll_id_index', 'id')
+
+
 async def create_database():
     await database.set_bind(DATABASE_URL)
     try:
