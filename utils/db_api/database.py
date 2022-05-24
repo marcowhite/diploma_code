@@ -130,6 +130,15 @@ class UserPoll(BaseModel):
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
+    @classmethod
+    async def create_or_update(cls, poll_id: int,user_id : int, **kwargs):
+        obj = await cls.get(cls.poll_id == poll_id,cls.user_id == user_id)
+        if not obj:
+            obj = await cls.create(poll_id=poll_id, user_id=user_id, **kwargs)
+        else:
+            await obj.update(poll_id=poll_id, user_id=user_id, **kwargs).apply()
+        return obj
+
     _idx = Index('user_poll_id_index', 'id')
 
 
