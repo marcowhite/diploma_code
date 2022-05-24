@@ -74,6 +74,8 @@ class Poll(BaseModel):
     user_id = Column(Integer, ForeignKey('users.id'))
     name = Column(String(64))
     description = Column(String(256))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     _idx = Index('poll_id_index', 'id')
 
@@ -125,6 +127,7 @@ class UserPoll(BaseModel):
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     poll_id = Column(Integer, ForeignKey('polls.id'))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     _idx = Index('user_poll_id_index', 'id')
