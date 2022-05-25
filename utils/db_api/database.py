@@ -79,6 +79,12 @@ class Poll(BaseModel):
 
     _idx = Index('poll_id_index', 'id')
 
+    def __str__(self):
+        obj = "ID: " + str(self.id) + "\n"
+        obj += "Название опроса: " + self.name + "\n"
+        obj += "Описание: " + self.description + "\n"
+        return str(obj)
+
 
 class Question(BaseModel):
     __tablename__ = 'questions'
