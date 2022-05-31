@@ -3,11 +3,12 @@ from aiogram.dispatcher import FSMContext
 
 from keyboards.default import main, polls
 from keyboards.inline import edit_question,edit_poll
+from keyboards.inline.edit_poll import make_question_keyboard
 
 from loader import dp
 import states
 
-from utils.db_api.database import Poll, UserPoll
+from utils.db_api.database import Poll, Question
 
 
 @dp.message_handler(text="🆕 Создать опрос")
@@ -31,13 +32,7 @@ async def process_create_poll_description(message: types.Message, state: FSMCont
         data['description'] = message.text
 
     poll = await Poll.create(name=data['name'], description=data['description'], user_id=message.from_user.id)
+    questions = await Question.get(Question.poll_id==poll.id)
 
-    await states.create_poll.CreatePoll.next()
-    await message.reply(str(poll), reply_markup=edit_poll.editPoll)
-
-
-@dp.message_handler(state=states.create_poll.CreatePoll.poll_edition)
-async def process_edit_poll(message: types.Message, state: FSMContext):
-
-    await message.reply('Завершено.', reply_markup=main.mainMenu)
+    await message.reply('Завершено.\n'+ str(poll), reply_markup=make_question_keyboard(questions=questions))
     await state.finish()

@@ -23,10 +23,6 @@ async def process_take_poll(message: types.Message, state: FSMContext):
 
     poll = await Poll.get(Poll.id == int(data['id']))
     userpoll = await UserPoll.create_or_update(poll_id=int(data['id']), user_id=message.from_user.id)
-    await message.reply('Завершено. ' +
-                        "\nID: " + str(poll.id) +
-                        "\nНазвание: " + poll.name +
-                        "\nОписание: " + poll.description +
-                        "\n" + str(userpoll.time_created) +
-                        "\n" + str(userpoll.time_updated), reply_markup=main.mainMenu)
+
+    await message.reply('Завершено.\n' + str(poll) + str(userpoll), reply_markup=main.mainMenu)
     await state.finish()

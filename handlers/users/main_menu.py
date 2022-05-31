@@ -23,9 +23,7 @@ async def command_poll_stats(message: types.Message):
     polls = await Poll.filter(Poll.user_id == int(message.from_user.id))
 
     for poll in polls:
-        await message.answer("ID: " + str(poll.id) +
-                             "\nНазвание: " + poll.name +
-                             "\nОписание: " + poll.description)
+        await message.answer(poll)
 
 
 @dp.message_handler(text="📜 Пройденные опросы")
@@ -34,8 +32,6 @@ async def command_poll_completed(message: types.Message):
 
     for userpoll in userpolls:
         poll = await Poll.get(Poll.id == userpoll.poll_id)
-        await message.answer("ID: " + str(poll.id) + "\nНазвание: " + poll.name + "\nОписание: " + poll.description
-                             + "\n" + str(userpoll.time_created)
-                             + "\n" + str(userpoll.time_updated), reply_markup=main.mainMenu)
+        await message.answer(str(poll) + str(userpoll), reply_markup=main.mainMenu)
 
 

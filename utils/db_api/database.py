@@ -80,7 +80,7 @@ class Poll(BaseModel):
     _idx = Index('poll_id_index', 'id')
 
     def __str__(self):
-        obj = "ID: " + str(self.id) + "\n"
+        obj = "ID: <code>" + str(self.id) + "</code>\n"
         obj += "Название опроса: " + self.name + "\n"
         obj += "Описание: " + self.description + "\n"
         return str(obj)
@@ -147,6 +147,10 @@ class UserPoll(BaseModel):
 
     _idx = Index('user_poll_id_index', 'id')
 
+    def __str__(self):
+        obj = "Время создания : " + str(self.time_created) + "\n"
+        obj += "Последнее изменение : " + str(self.time_updated) + "\n"
+        return str(obj)
 
 async def create_database():
     await database.set_bind(DATABASE_URL)
