@@ -71,7 +71,7 @@ class Poll(BaseModel):
     __tablename__ = 'polls'
 
     id = Column(Integer, Sequence('poll_id_seq'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     name = Column(String(64))
     description = Column(String(256))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
@@ -90,8 +90,8 @@ class Question(BaseModel):
     __tablename__ = 'questions'
 
     id = Column(Integer, Sequence('question_id_seq'), primary_key=True)
-    poll_id = Column(Integer, ForeignKey('polls.id'))
-    type_id = Column(Integer, ForeignKey('types.id'))
+    poll_id = Column(Integer, ForeignKey('polls.id', ondelete='CASCADE'))
+    type_id = Column(Integer, ForeignKey('types.id', ondelete='CASCADE'))
     text = Column(String(256))
 
     _idx = Index('question_id_index', 'id')
@@ -110,7 +110,7 @@ class Answer(BaseModel):
     __tablename__ = 'answers'
 
     id = Column(Integer, Sequence('answer_id_seq'), primary_key=True)
-    question_id = Column(Integer, ForeignKey('questions.id'))
+    question_id = Column(Integer, ForeignKey('questions.id', ondelete='CASCADE'))
     text = Column(String(256))
 
     _idx = Index('answer_id_index', 'id')
@@ -120,9 +120,9 @@ class UserAnswer(BaseModel):
     __tablename__ = 'user_answers'
 
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    question_id = Column(Integer, ForeignKey('questions.id'))
-    answer_id = Column(Integer, ForeignKey('answers.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    question_id = Column(Integer, ForeignKey('questions.id', ondelete='CASCADE'))
+    answer_id = Column(Integer, ForeignKey('answers.id', ondelete='CASCADE'))
 
     _idx = Index('user_answer_id_index', 'id')
 
@@ -131,14 +131,14 @@ class UserPoll(BaseModel):
     __tablename__ = 'user_polls'
 
     id = Column(Integer, Sequence('user_answer_id_seq'), primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    poll_id = Column(Integer, ForeignKey('polls.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    poll_id = Column(Integer, ForeignKey('polls.id', ondelete='CASCADE'))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     @classmethod
-    async def create_or_update(cls, poll_id: int,user_id : int, **kwargs):
-        obj = await cls.get(cls.poll_id == poll_id,cls.user_id == user_id)
+    async def create_or_update(cls, poll_id: int, user_id: int, **kwargs):
+        obj = await cls.get(cls.poll_id == poll_id, cls.user_id == user_id)
         if not obj:
             obj = await cls.create(poll_id=poll_id, user_id=user_id, **kwargs)
         else:
@@ -152,9 +152,14 @@ class UserPoll(BaseModel):
         obj += "Последнее изменение : " + str(self.time_updated) + "\n"
         return str(obj)
 
+
 async def create_database():
     await database.set_bind(DATABASE_URL)
     try:
         await database.gino.create_all()
     except InvalidRequestError:
         pass
+    finally:
+        await Type.create(text="Один вариант ответа")
+        await Type.create(text="Несколько вариантов ответа")
+        await Type.create(text="Пользовательский вариант ответа")

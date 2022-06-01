@@ -1,9 +1,7 @@
 from aiogram import types
-from aiogram.dispatcher import FSMContext
 
 from keyboards.default import main, polls
 from loader import dp
-import states
 
 from utils.db_api.database import Poll, UserPoll
 
@@ -22,8 +20,11 @@ async def command_go_main(message: types.Message):
 async def command_poll_stats(message: types.Message):
     polls = await Poll.filter(Poll.user_id == int(message.from_user.id))
 
-    for poll in polls:
-        await message.answer(poll)
+    if polls:
+        for poll in polls:
+            await message.answer(poll)
+    else:
+        await message.answer('У вас нет опросов!')
 
 
 @dp.message_handler(text="📜 Пройденные опросы")
@@ -33,5 +34,3 @@ async def command_poll_completed(message: types.Message):
     for userpoll in userpolls:
         poll = await Poll.get(Poll.id == userpoll.poll_id)
         await message.answer(str(poll) + str(userpoll), reply_markup=main.mainMenu)
-
-

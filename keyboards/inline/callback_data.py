@@ -11,6 +11,9 @@ edit_poll_name_callback = CallbackData("poll", "poll_id")
 start_poll_callback = CallbackData("start_poll", "poll_id")
 finish_poll_callback = CallbackData("finish_poll", "poll_id")
 back_to_poll_callback = CallbackData("back_to_poll", "poll_id")
+delete_poll_callback = CallbackData("delete_poll", "poll_id")
+finish_poll_creation_callback = CallbackData("finish_poll_creation", "poll_id")
+
 
 check_poll_results_callback = CallbackData("check_poll_results", "poll_id")
 
