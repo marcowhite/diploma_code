@@ -7,7 +7,7 @@ from keyboards.inline.callback_data import answer_callback, back_to_poll_callbac
     add_answer_callback, delete_question_callback, edit_question_type_callback
 
 
-def make_edit_question_keyboard(answers: List[Answer], poll_id: int, question_id: int):
+def make_edit_question_keyboard(answers: List[Answer], poll_id: int, question_id: int, type_id: int):
     keyboard = InlineKeyboardMarkup(row_width=1)
 
     if answers:
@@ -20,19 +20,19 @@ def make_edit_question_keyboard(answers: List[Answer], poll_id: int, question_id
             )
             count += 1
 
+    if type_id != 3:
+        keyboard.add(
+            InlineKeyboardButton(text="Добавить ответ", callback_data=add_answer_callback.new(question_id=question_id)))
     keyboard.add(
         InlineKeyboardButton(text="Изменить текст вопроса",
                              callback_data=edit_question_callback.new(question_id=question_id))
     )
+    # keyboard.add(
+    #     InlineKeyboardButton(text="Изменить тип вопроса",
+    #                          callback_data=edit_question_type_callback.new(question_id=question_id))
+    # )
     keyboard.add(
-        InlineKeyboardButton(text="Изменить тип вопроса",
-                             callback_data=edit_question_type_callback.new(question_id=question_id))
-    )
-    keyboard.add(
-        InlineKeyboardButton(text="Добавить ответ", callback_data=add_answer_callback.new(question_id=question_id))
-    )
-    keyboard.add(
-        InlineKeyboardButton(text="Удалить вопрос", callback_data=delete_question_callback.new(poll_id=poll_id))
+        InlineKeyboardButton(text="Удалить вопрос", callback_data=delete_question_callback.new(question_id=question_id))
     )
     keyboard.add(
         InlineKeyboardButton(text="Назад", callback_data=back_to_poll_callback.new(poll_id=poll_id))

@@ -1,6 +1,8 @@
 from aiogram import types
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.default import main, polls
+from keyboards.inline.callback_data import stat_poll_callback
 from loader import dp
 
 from utils.db_api.database import Poll, UserPoll
@@ -22,7 +24,8 @@ async def command_poll_stats(message: types.Message):
 
     if polls:
         for poll in polls:
-            await message.answer(poll)
+            await message.answer(poll, reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(
+                text="Показать статистику", callback_data=stat_poll_callback.new(poll_id=poll.id))))
     else:
         await message.answer('У вас нет опросов!')
 

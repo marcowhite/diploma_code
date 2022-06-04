@@ -105,6 +105,13 @@ class Type(BaseModel):
 
     _idx = Index('type_id_index', 'id')
 
+    @staticmethod
+    async def init_types():
+        types = await Type.filter()
+        if not types:
+            await Type.create(text="Один вариант ответа")
+            await Type.create(text="Несколько вариантов ответа")
+            await Type.create(text="Пользовательский вариант ответа")
 
 class Answer(BaseModel):
     __tablename__ = 'answers'
@@ -160,6 +167,4 @@ async def create_database():
     except InvalidRequestError:
         pass
     finally:
-        await Type.create(text="Один вариант ответа")
-        await Type.create(text="Несколько вариантов ответа")
-        await Type.create(text="Пользовательский вариант ответа")
+        await Type.init_types()

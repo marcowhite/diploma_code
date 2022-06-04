@@ -4,6 +4,7 @@ from . import help
 
 from . import main_menu
 from . import poll_creation
+from . import poll_edition
 from . import poll_taking
 
 from . import echo
