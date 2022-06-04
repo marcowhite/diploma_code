@@ -30,5 +30,6 @@ add_question_callback = CallbackData("add_question", "poll_id")
 # answer callbacks
 
 answer_callback = CallbackData("answer", "answer_id")
+pick_answer_callback = CallbackData("pick_answer", "answer_id")
 add_answer_callback = CallbackData("add_answer", "question_id")
 

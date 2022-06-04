@@ -2,4 +2,4 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 class TakePoll(StatesGroup):
-    id = State()
+    poll_id = State()

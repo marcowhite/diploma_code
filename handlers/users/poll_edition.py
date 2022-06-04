@@ -6,7 +6,7 @@ from keyboards.default import main, polls, question_type
 from keyboards.inline.edit_poll import make_question_keyboard
 from keyboards.inline.callback_data import poll_callback, add_question_callback, edit_poll_name_callback, \
     question_callback, delete_poll_callback, edit_poll_description_callback, finish_poll_creation_callback, \
-    add_answer_callback, back_to_poll_callback, delete_question_callback, edit_question_callback
+    add_answer_callback, back_to_poll_callback, delete_question_callback, edit_question_callback, answer_callback
 from keyboards.inline.edit_question import make_edit_question_keyboard
 
 from loader import dp
@@ -16,7 +16,7 @@ from utils.db_api.database import Poll, Question, Answer
 
 
 @dp.callback_query_handler(poll_callback.filter())
-async def bot_polls_callback(call: CallbackQuery, callback_data: dict):
+async def bot_poll_callback(call: CallbackQuery, callback_data: dict):
     poll = await Poll.get(Poll.id == int(callback_data['poll_id']))
     questions = await Question.filter(Question.poll_id == poll.id)
 
@@ -25,7 +25,7 @@ async def bot_polls_callback(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(back_to_poll_callback.filter())
-async def bot_polls_callback(call: CallbackQuery, callback_data: dict):
+async def bot_back_to_poll_callback(call: CallbackQuery, callback_data: dict):
     poll = await Poll.get(Poll.id == int(callback_data['poll_id']))
     questions = await Question.filter(Question.poll_id == poll.id)
 
@@ -50,6 +50,21 @@ async def bot_delete_question_callback(call: CallbackQuery, callback_data: dict)
     questions = await Question.filter(Question.poll_id == poll.id)
     await call.message.edit_text(text=str(poll),
                                  reply_markup=make_question_keyboard(questions=questions, poll_id=poll.id))
+
+
+@dp.callback_query_handler(answer_callback.filter())
+async def bot_delete_answer_callback(call: CallbackQuery, callback_data: dict):
+    answer = await Answer.get(Answer.id == int(callback_data['answer_id']))
+    question_id = answer.question_id
+    await Answer.delete.where(Answer.id == int(callback_data['answer_id'])).gino.status()
+
+    question = await Question.get(Question.id == question_id)
+    answers = await Answer.filter(Answer.question_id == question.id)
+    await call.message.edit_text(text="Вопрос: " + question.text,
+                                 reply_markup=make_edit_question_keyboard(answers=answers,
+                                                                          poll_id=int(question.poll_id),
+                                                                          question_id=int(question.id),
+                                                                          type_id=question.type_id))
 
 
 @dp.callback_query_handler(finish_poll_creation_callback.filter())

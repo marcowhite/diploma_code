@@ -92,7 +92,7 @@ class Question(BaseModel):
     id = Column(Integer, Sequence('question_id_seq'), primary_key=True)
     poll_id = Column(Integer, ForeignKey('polls.id', ondelete='CASCADE'))
     type_id = Column(Integer, ForeignKey('types.id', ondelete='CASCADE'))
-    text = Column(String(256))
+    text = Column(String(4096))
 
     _idx = Index('question_id_index', 'id')
 
@@ -118,7 +118,7 @@ class Answer(BaseModel):
 
     id = Column(Integer, Sequence('answer_id_seq'), primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id', ondelete='CASCADE'))
-    text = Column(String(256))
+    text = Column(String(4096))
 
     _idx = Index('answer_id_index', 'id')
 

@@ -13,7 +13,7 @@ def make_edit_question_keyboard(answers: List[Answer], poll_id: int, question_id
     if answers:
         count = 1
         for answer in answers:
-            button_text = str(count) + ". "
+            button_text = "❌  "+ str(count) + ". "
             button_text += answer.text
             keyboard.add(
                 InlineKeyboardButton(text=button_text, callback_data=answer_callback.new(answer_id=answer.id))
