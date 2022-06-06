@@ -69,6 +69,7 @@ async def bot_delete_answer_callback(call: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(finish_poll_creation_callback.filter())
 async def bot_finish_poll_creation_callback(call: CallbackQuery, callback_data: dict):
+    
     await call.message.delete()
     await call.message.answer(text="Завершено.", reply_markup=main.mainMenu)
 
