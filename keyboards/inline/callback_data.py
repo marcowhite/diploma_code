@@ -38,3 +38,6 @@ delete_answer_created_by_user_callback = CallbackData("delete_answer_created_by_
 enter_user_answer_callback = CallbackData("enter_user_answer", "question_id")
 add_answer_callback = CallbackData("add_answer", "question_id")
 
+#userpoll callbacks
+
+pick_user_poll_callback = CallbackData("pick_user_poll", "userpoll_id")

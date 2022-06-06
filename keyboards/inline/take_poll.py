@@ -11,7 +11,7 @@ from keyboards.inline.callback_data import answer_callback, back_to_poll_callbac
 
 def question_keyboard(
         poll_id: int, answers: List[Answer], user_answer_ids: List[int], prev_question_id: int, next_question_id: int,
-        is_passed: bool, question_type: int, question_id: int
+        question_type: int, question_id: int
 ):
     keyboard = InlineKeyboardMarkup(row_width=2)
     if question_type == 2:
@@ -61,13 +61,13 @@ def question_keyboard(
         nav_buttons.append(
             InlineKeyboardButton(text="🔙", callback_data=poll_taking_question_callback.new(question_id=prev_question_id))
         )
-    else:
-        nav_buttons.append(InlineKeyboardButton(text="🔙", callback_data=start_poll_callback.new(poll_id=poll_id)))
+    # else:
+    #     nav_buttons.append(InlineKeyboardButton(text="🔙", callback_data=start_poll_callback.new(poll_id=poll_id)))
     if next_question_id:
         nav_buttons.append(
             InlineKeyboardButton(text="🔜", callback_data=poll_taking_question_callback.new(question_id=next_question_id))
         )
-    elif not is_passed:
+    else:
         nav_buttons.append(
             InlineKeyboardButton(text="🏁", callback_data=finish_poll_callback.new(poll_id=poll_id))
         )

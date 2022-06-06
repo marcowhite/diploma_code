@@ -27,14 +27,18 @@ async def process_take_poll(message: types.Message, state: FSMContext):
         data['poll_id'] = message.text
 
     poll = await Poll.get(Poll.id == int(data['poll_id']))
+    userpoll = await UserPoll.get(UserPoll.poll_id == int(data['poll_id']))
     if poll:
-        await message.reply(text=str(poll), reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(
-            text="Пройти опрос", callback_data=start_poll_callback.new(poll_id=poll.id))))
+        if userpoll:
+            await message.reply(text=str(poll) + str(userpoll),
+                                reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(
+                                    text="Перепройти опрос", callback_data=start_poll_callback.new(poll_id=poll.id))))
+        else:
+            await message.reply(text=str(poll), reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(
+                text="Пройти опрос", callback_data=start_poll_callback.new(poll_id=poll.id))))
     else:
         await message.reply(text="Опроса с таким идентификатором не существует. Попробуйте снова!",
                             reply_markup=main.mainMenu)
-
-    # userpoll = await UserPoll.create_or_update(poll_id=int(data['id']), user_id=message.from_user.id)
 
     await state.finish()
 
@@ -56,7 +60,7 @@ async def bot_start_poll_callback(call: CallbackQuery, callback_data: dict):
                                                                 next_question_id=next_question_id,
                                                                 question_type=question.type_id,
                                                                 question_id=question.id,
-                                                                is_passed=False))
+                                                                ))
 
 
 @dp.callback_query_handler(pick_answer_callback.filter())
@@ -99,7 +103,7 @@ async def bot_pick_answer_callback(call: CallbackQuery, callback_data: dict):
                                                                 next_question_id=next_question_id,
                                                                 question_type=question.type_id,
                                                                 question_id=question.id,
-                                                                is_passed=False))
+                                                                ))
 
 
 @dp.callback_query_handler(finish_poll_callback.filter())
@@ -107,7 +111,6 @@ async def bot_finish_poll_callback(call: CallbackQuery, callback_data: dict):
     userpoll = await UserPoll.create_or_update(poll_id=int(callback_data['poll_id']), user_id=call.from_user.id)
     await call.message.delete()
     await call.message.answer(text="Завершено.", reply_markup=main.mainMenu)
-
 
 
 @dp.callback_query_handler(poll_taking_question_callback.filter())
@@ -127,7 +130,8 @@ async def bot_poll_taking_question_callback(call: CallbackQuery, callback_data: 
                                                                 next_question_id=next_question_id,
                                                                 question_type=question.type_id,
                                                                 question_id=question.id,
-                                                                is_passed=False))
+                                                                ))
+
 
 # enter user answer
 @dp.callback_query_handler(enter_user_answer_callback.filter())
@@ -161,6 +165,6 @@ async def process_enter_user_answer_text(message: types.Message, state: FSMConte
                                                         next_question_id=next_question_id,
                                                         question_type=question.type_id,
                                                         question_id=question.id,
-                                                        is_passed=False))
+                                                        ))
 
     await state.finish()
