@@ -32,7 +32,7 @@ async def bot_pick_user_poll_callback(call: CallbackQuery, callback_data: dict):
     questions = await Question.filter(Question.poll_id == user_poll.poll_id)
     message_text = str(poll)
     for question in questions:
-        message_text += "\n" + question.text
+        message_text += "\n<b>" + question.text + "</b>"
         answers = await Answer.filter(Answer.question_id == question.id)
         for answer in answers:
             user_answer = await UserAnswer.get(UserAnswer.answer_id == answer.id)

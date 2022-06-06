@@ -17,9 +17,9 @@ def question_keyboard(
     if question_type == 2:
         for answer in answers:
             if answer.id in user_answer_ids:
-                button_text = f"☑️  {answer.text}"
+                button_text = f"☑️ {answer.text}"
             else:
-                button_text = f"🔲 {answer.text}"
+                button_text = f"🔲   {answer.text}"
             keyboard.add(
                 InlineKeyboardButton(
                     text=button_text,
@@ -36,7 +36,7 @@ def question_keyboard(
             )
         else:
             answer = answers.pop()
-            button_text = "❌" + answer.text
+            button_text = "❌ " + answer.text
             keyboard.add(
                 InlineKeyboardButton(
                     text=button_text,
@@ -46,7 +46,7 @@ def question_keyboard(
     else:
         for answer in answers:
             if answer.id in user_answer_ids:
-                button_text = f"☑️{answer.text}"
+                button_text = f"☑️ {answer.text}"
             else:
                 button_text = answer.text
             keyboard.add(

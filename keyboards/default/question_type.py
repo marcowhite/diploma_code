@@ -9,10 +9,3 @@ btnTypeThree = KeyboardButton('3. Пользовательский вариан�
 typeQuestionMenu = ReplyKeyboardMarkup(resize_keyboard=True).row(btnTypeOne)
 typeQuestionMenu.row(btnTypeTwo)
 typeQuestionMenu.row(btnTypeThree)
-
-
-# question menu
-
-btnGoBack = KeyboardButton('⬅️')
-btnGoForward = KeyboardButton('➡️')
-questionMenu = ReplyKeyboardMarkup(resize_keyboard=True).add(btnGoBack, btnGoForward)
