@@ -6,7 +6,7 @@ from keyboards.inline.edit_poll import make_question_keyboard
 from loader import dp
 import states
 
-from utils.db_api.database import Poll, Question, Answer
+from utils.db_api.database import Poll, Question
 
 
 @dp.message_handler(text="🆕 Создать опрос")

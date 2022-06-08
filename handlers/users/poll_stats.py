@@ -1,8 +1,6 @@
 from keyboards.inline.callback_data import stat_poll_callback, pick_user_poll_callback
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
-from keyboards.inline.edit_question import make_edit_question_keyboard
-
 from loader import dp
 
 from utils.db_api.database import Poll, Question, Answer, UserPoll, User, UserAnswer
@@ -26,19 +24,19 @@ async def bot_stat_poll_callback(call: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(pick_user_poll_callback.filter())
 async def bot_pick_user_poll_callback(call: CallbackQuery, callback_data: dict):
-    message_text = ""
     user_poll = await UserPoll.get(UserPoll.id == int(callback_data['userpoll_id']))
     poll = await Poll.get(Poll.id == user_poll.poll_id)
     questions = await Question.filter(Question.poll_id == user_poll.poll_id)
+    user = await User.get(User.id == user_poll.user_id)
     message_text = str(poll)
+    message_text += "Имя пользователя: @" + user.username + "\n"
     for question in questions:
         message_text += "\n<b>" + question.text + "</b>"
         answers = await Answer.filter(Answer.question_id == question.id)
         for answer in answers:
             user_answer = await UserAnswer.get(UserAnswer.answer_id == answer.id)
-            message_text += "\n " + answer.text
             if user_answer:
-                message_text += " ☑️"
-    user = await User.get(User.id == user_poll.user_id)
+                message_text += "\n" + answer.text + "\n"
+                # message_text += " ☑️"
 
     await call.message.answer(text=message_text)

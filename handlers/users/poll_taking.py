@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
-from keyboards.default import main, polls
+from keyboards.default import main
 from keyboards.inline.callback_data import start_poll_callback, pick_answer_callback, poll_taking_question_callback, \
     enter_user_answer_callback, finish_poll_callback
 from keyboards.inline.take_poll import question_keyboard

@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 
-from keyboards.default import main, polls, question_type
+from keyboards.default import main, question_type
 from keyboards.inline.edit_poll import make_question_keyboard
 from keyboards.inline.callback_data import poll_callback, add_question_callback, edit_poll_name_callback, \
     question_callback, delete_poll_callback, edit_poll_description_callback, finish_poll_creation_callback, \
