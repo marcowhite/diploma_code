@@ -18,6 +18,7 @@ With this bot you can:
   - Change your answers after compltion
 - Get user answers for your poll in stats menu
 
+Some of the features like poll editing after creation were left behind to maintain data integrity. Perhaps in future updates those shortcomings may desappear.
 ## To launch the rocket add .env with:
 ```
 ADMINS=admin_id
