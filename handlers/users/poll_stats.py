@@ -36,7 +36,8 @@ async def bot_pick_user_poll_callback(call: CallbackQuery, callback_data: dict):
         for answer in answers:
             user_answer = await UserAnswer.get(UserAnswer.answer_id == answer.id)
             if user_answer:
-                message_text += "\n" + answer.text + "\n"
+                message_text += "\n" + answer.text
                 # message_text += " ☑️"
+        message_text += "\n"
 
     await call.message.answer(text=message_text)

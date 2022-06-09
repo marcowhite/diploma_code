@@ -4,7 +4,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQu
 
 from keyboards.default import main
 from keyboards.inline.callback_data import start_poll_callback, pick_answer_callback, poll_taking_question_callback, \
-    enter_user_answer_callback, finish_poll_callback
+    enter_user_answer_callback, finish_poll_callback, delete_answer_created_by_user_callback
 from keyboards.inline.take_poll import question_keyboard
 from loader import dp
 import states
@@ -55,6 +55,29 @@ async def bot_start_poll_callback(call: CallbackQuery, callback_data: dict):
                                                UserAnswer.question_id == question.id, select_values=['answer_id'])]
     await call.message.edit_text(text=question.text,
                                  reply_markup=question_keyboard(poll_id=int(callback_data['poll_id']), answers=answers,
+                                                                user_answer_ids=user_answer_ids,
+                                                                prev_question_id=prev_question_id,
+                                                                next_question_id=next_question_id,
+                                                                question_type=question.type_id,
+                                                                question_id=question.id,
+                                                                ))
+
+
+@dp.callback_query_handler(delete_answer_created_by_user_callback.filter())
+async def bot_start_poll_callback(call: CallbackQuery, callback_data: dict):
+    answer = await Answer.get(Answer.id == int(callback_data['answer_id']))
+    question = await Question.get(Question.id == answer.question_id)
+    await UserAnswer.delete.where(UserAnswer.answer_id == answer.id).where(
+        UserAnswer.user_id == call.from_user.id).gino.status()
+    await Answer.delete.where(Answer.id == answer.id).gino.status()
+    answers = await Answer.filter(Answer.question_id == question.id)
+    questions = await Question.filter(Question.poll_id == question.poll_id, select_values=['id'])
+    prev_question_id, next_question_id = get_prev_and_next_question_id(question_id=question.id, questions=questions)
+    user_answer_ids = [user_answer_id[0] for user_answer_id in
+                       await UserAnswer.filter(UserAnswer.user_id == call.from_user.id,
+                                               UserAnswer.question_id == question.id, select_values=['answer_id'])]
+    await call.message.edit_text(text=question.text,
+                                 reply_markup=question_keyboard(poll_id=question.poll_id, answers=answers,
                                                                 user_answer_ids=user_answer_ids,
                                                                 prev_question_id=prev_question_id,
                                                                 next_question_id=next_question_id,
