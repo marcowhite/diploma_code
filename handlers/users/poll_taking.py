@@ -64,7 +64,7 @@ async def bot_start_poll_callback(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(delete_answer_created_by_user_callback.filter())
-async def bot_start_poll_callback(call: CallbackQuery, callback_data: dict):
+async def bot_delete_answer_created_by_user_callback(call: CallbackQuery, callback_data: dict):
     answer = await Answer.get(Answer.id == int(callback_data['answer_id']))
     question = await Question.get(Question.id == answer.question_id)
     await UserAnswer.delete.where(UserAnswer.answer_id == answer.id).where(
