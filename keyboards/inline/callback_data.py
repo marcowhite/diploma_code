@@ -17,6 +17,8 @@ finish_poll_creation_callback = CallbackData("finish_poll_creation", "poll_id")
 edit_poll_callback = CallbackData("edit_poll", "poll_id")
 
 search_by_username_callback = CallbackData("search_by_username", "poll_id")
+back_to_poll_stats_callback = CallbackData("back_to_poll_stats", "poll_id")
+share_poll_callback = CallbackData("share_poll", "poll_id")
 
 stat_poll_callback = CallbackData("stat_poll", "poll_id")
 check_poll_results_callback = CallbackData("check_poll_results", "poll_id")

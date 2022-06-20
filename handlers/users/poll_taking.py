@@ -9,7 +9,8 @@ from keyboards.inline.take_poll import question_keyboard
 from loader import dp
 import states
 
-from utils.db_api.database import Poll, UserPoll, Question, UserAnswer, Answer
+from utils.db_api.database import Poll, UserPoll, Question, UserAnswer, Answer, User
+from utils.misc.poll_result import get_poll_result_text
 from utils.misc.polls import get_prev_and_next_question_id
 
 
@@ -27,7 +28,7 @@ async def process_take_poll(message: types.Message, state: FSMContext):
         data['poll_id'] = message.text
 
     poll = await Poll.get(Poll.id == int(data['poll_id']))
-    userpoll = await UserPoll.get(UserPoll.poll_id == int(data['poll_id']))
+    userpoll = await UserPoll.get(UserPoll.poll_id == int(data['poll_id']), UserPoll.user_id == message.from_user.id)
     if poll:
         if userpoll:
             await message.reply(text=str(poll) + str(userpoll),
@@ -131,16 +132,30 @@ async def bot_pick_answer_callback(call: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(finish_poll_callback.filter())
 async def bot_finish_poll_callback(call: CallbackQuery, callback_data: dict):
-    userpoll = await UserPoll.create_or_update(poll_id=int(callback_data['poll_id']), user_id=call.from_user.id)
+    user_poll = await UserPoll.create_or_update(poll_id=int(callback_data['poll_id']), user_id=call.from_user.id)
+    poll = await Poll.get(Poll.id == user_poll.poll_id)
+    questions = await Question.filter(Question.poll_id == user_poll.poll_id)
+    user = await User.get(User.id == user_poll.user_id)
+    message_text = "Опрос завершен!\nРезультаты:\n"
+    message_text += await get_poll_result_text(poll=str(poll), username=str(user.username), questions=questions)
     await call.message.delete()
-    await call.message.answer(text="Завершено.", reply_markup=main.mainMenu)
+    await call.message.answer(text=message_text, reply_markup=main.mainMenu)
 
 
 @dp.callback_query_handler(poll_taking_question_callback.filter())
 async def bot_poll_taking_question_callback(call: CallbackQuery, callback_data: dict):
     question = await Question.get(Question.id == int(callback_data['question_id']))
 
-    answers = await Answer.filter(Answer.question_id == question.id)
+    if question.type_id == 3:
+        user_answer = await UserAnswer.get(UserAnswer.question_id == question.id,
+                                           UserAnswer.user_id == call.from_user.id)
+        if user_answer:
+            answers = await Answer.filter(Answer.id == user_answer.answer_id)
+        else:
+            answers = None
+    else:
+        answers = await Answer.filter(Answer.question_id == question.id)
+
     questions = await Question.filter(Question.poll_id == question.poll_id, select_values=['id'])
     prev_question_id, next_question_id = get_prev_and_next_question_id(question_id=question.id, questions=questions)
     user_answer_ids = [user_answer_id[0] for user_answer_id in

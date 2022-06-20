@@ -80,9 +80,9 @@ class Poll(BaseModel):
     _idx = Index('poll_id_index', 'id')
 
     def __str__(self):
-        obj = "ID: <code>" + str(self.id) + "</code>\n"
-        obj += "Название опроса: " + self.name + "\n"
-        obj += "Описание: " + self.description + "\n"
+        obj = "<b>ID:</b> <code>" + str(self.id) + "</code>\n"
+        obj += "<b>Название опроса:</b> " + self.name + "\n"
+        obj += "<b>Описание:</b> " + self.description + "\n"
         return str(obj)
 
 

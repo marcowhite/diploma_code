@@ -3,7 +3,8 @@ from typing import List
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from keyboards.inline.callback_data import question_callback, add_question_callback, edit_poll_name_callback, \
-    edit_poll_description_callback, delete_poll_callback, finish_poll_creation_callback
+    edit_poll_description_callback, delete_poll_callback, finish_poll_creation_callback, share_poll_callback, \
+    stat_poll_callback
 from utils.db_api.database import Question, Poll
 
 
@@ -38,4 +39,17 @@ def make_question_keyboard(questions: List[Question], poll_id: int):
                              callback_data=finish_poll_creation_callback.new(poll_id=poll_id))
     )
 
+    return keyboard
+
+
+def make_poll_stats_keyboard(poll_id: int):
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    keyboard.add(
+        InlineKeyboardButton(text="Показать статистику", callback_data=stat_poll_callback.new(poll_id=poll_id)))
+    keyboard.add(
+        InlineKeyboardButton(text="Поделиться", callback_data=share_poll_callback.new(poll_id=poll_id)))
+    keyboard.add(
+        InlineKeyboardButton(text="Удалить опрос",
+                             callback_data=delete_poll_callback.new(poll_id=poll_id))
+    )
     return keyboard
